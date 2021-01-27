@@ -1,0 +1,78 @@
+<div class="main-container">
+  <div class="c-add-btn">
+    <button mat-raised-button color="primary" (click)="openAddUserDlg()">Add user</button>
+  </div>
+  <form [formGroup]="addForm">
+  <table mat-table [dataSource]="userList" class="mat-elevation-z8">
+ 
+    <!-- Name Column -->
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element" (click)="onClick(element, 'name')">
+        <mat-form-field *ngIf="element.editingCell == 'name'; else showName" appearance="legacy">
+          <input matInput type="text" formControlName="name" required />
+          <mat-error *ngIf="(addFormControls['name'].touched || submitted) && addFormControls['name'].invalid">Name is required</mat-error>
+        </mat-form-field>
+        <ng-template #showName>
+          {{element.name}}
+        </ng-template>
+      </td>
+    </ng-container>
+  
+    <!-- Email Column -->
+    <ng-container matColumnDef="email">
+      <th mat-header-cell *matHeaderCellDef> Email </th>
+      <td mat-cell *matCellDef="let element" (click)="onClick(element, 'email')">
+        <mat-form-field *ngIf="element.editingCell == 'email'; else showEmail" appearance="legacy">
+          <input matInput type="text" formControlName="email" required />
+          <mat-error *ngIf="addFormControls['email'].invalid">
+            <span *ngIf="(addFormControls['email'].touched || submitted) && addFormControls['email'].hasError('required')">Email is required</span>
+            <span *ngIf="addFormControls['email'].hasError('email')">Not a valid email</span>
+          </mat-error>
+        </mat-form-field>
+        <ng-template #showEmail>
+          {{element.email}}
+        </ng-template>
+      </td>
+    </ng-container>
+  
+    <!-- Phone Column -->
+    <ng-container matColumnDef="phone">
+      <th mat-header-cell *matHeaderCellDef> Phone </th>
+      <td mat-cell *matCellDef="let element" (click)="onClick(element, 'phone')">
+        <mat-form-field *ngIf="element.editingCell == 'phone'; else showPhone" appearance="legacy">
+          <mat-label>Enter your phone number</mat-label><ngx-mat-intl-tel-input
+            [preferredCountries]="['us', 'gb']"
+            [enablePlaceholder]="true"
+            [enableSearch]="true"
+            format="international"
+            name="phone"
+            formControlName="phone"
+            #phone>
+          </ngx-mat-intl-tel-input>
+          <mat-error *ngIf="(addFormControls['phone'].touched || submitted) && addFormControls['phone']?.errors?.required">Phone number is required</mat-error>
+          <mat-error *ngIf="addFormControls['phone']?.errors?.validatePhoneNumber">Invalid Number</mat-error>
+        </mat-form-field>
+        <ng-template #showPhone>
+          {{element.phone}}
+        </ng-template>
+      </td>
+    </ng-container>
+  
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Actions </th>
+      <td mat-cell *matCellDef="let element">
+        <button *ngIf="!element.editingCell; else showUpdate" mat-button color="warn" (click)="deleteUser(element)">Delete</button>
+        <ng-template #showUpdate>
+          <button type="submit" mat-button color="primary" (click)="updateUser(element)">Update</button>
+          <button mat-button (click)="cancelUpdate(element)">Cancel</button>
+        </ng-template>
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  </form>
+</div>
